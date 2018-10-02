@@ -11,7 +11,7 @@ import com.kotlinnlp.lssencoder.language.ParsingSentence
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 
 /**
- * The latent syntactic structure encoded by the TokensEncoder, the ContextEncoder and the HeadsEncoder.
+ * The latent syntactic structure encoded by the tokens encoder, the context encoder and the heads encoder.
  *
  * @property sentence the sentence containing the tokens
  * @property contextVectors the context vectors encoded by the ContextEncoder
