@@ -22,7 +22,7 @@ import com.kotlinnlp.tokensencoder.TokensEncoderOptimizerFactory
  * @param updateMethod the update method helper (Learning Rate, ADAM, AdaGrad, ...)
  */
 class LSSOptimizer(
-  private val model: LSSModel,
+  private val model: LSSModel<*, *>,
   updateMethod: UpdateMethod<*>
 ) : Optimizer<LSSParameters>(updateMethod) {
 
