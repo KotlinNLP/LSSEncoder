@@ -14,12 +14,14 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
  * The latent syntactic structure encoded by the tokens encoder, the context encoder and the heads encoder.
  *
  * @property sentence the sentence containing the tokens
- * @property contextVectors the context vectors encoded by the ContextEncoder
- * @property latentHeads the latent heads encoded by the HeadsEncoder
+ * @property contextVectors the tokens encoded by the tokens encoder
+ * @property contextVectors the context vectors encoded by the context encoder
+ * @property latentHeads the latent heads encoded by the heads encoder
  * @property virtualRoot the vector that represents the root token of a sentence
  */
 data class LatentSyntacticStructure(
   val sentence: ParsingSentence,
+  val tokensEncodings: List<DenseNDArray>,
   val contextVectors: List<DenseNDArray>,
   val latentHeads: List<DenseNDArray>,
   val virtualRoot: DenseNDArray
@@ -37,6 +39,13 @@ data class LatentSyntacticStructure(
   val latentSyntacticEncodings: List<DenseNDArray> by lazy {
     this.contextVectors.zip(this.latentHeads) { contextVector, latentHead -> contextVector.concatV(latentHead) }
   }
+
+  /**
+   * @param id the id of a token of the [sentence]
+   *
+   * @return the encoding of the given token
+   */
+  fun getTokenEncodingById(id: Int): DenseNDArray = this.tokensEncodings[this.sentence.getTokenIndex(id)]
 
   /**
    * @param id the id of a token of the [sentence]

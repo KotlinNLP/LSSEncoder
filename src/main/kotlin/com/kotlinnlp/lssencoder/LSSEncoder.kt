@@ -83,6 +83,7 @@ class LSSEncoder(
 
     return LatentSyntacticStructure(
       sentence = input,
+      tokensEncodings = tokensEncodings,
       contextVectors = contextVectors,
       latentHeads = latentHeads,
       virtualRoot = this.model.rootEmbedding.array.values)
