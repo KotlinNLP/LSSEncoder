@@ -31,7 +31,7 @@ class LSSEncoder(
   ParsingSentence, // InputType
   LatentSyntacticStructure, // OutputType
   LSSEncoder.OutputErrors, // ErrorsType
-  Any, // InputErrorsType
+  NeuralProcessor.NoInputErrors, // InputErrorsType
   LSSParameters // ParamsType
   > {
 
@@ -106,7 +106,7 @@ class LSSEncoder(
   /**
    * This method should not be used because the input is a sentence.
    */
-  override fun getInputErrors(copy: Boolean): Any {
+  override fun getInputErrors(copy: Boolean): NeuralProcessor.NoInputErrors {
     throw RuntimeException("The input errors of the LSS Encoder cannot be obtained because the input is a sentence.")
   }
 
