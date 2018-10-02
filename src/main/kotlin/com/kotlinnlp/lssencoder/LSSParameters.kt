@@ -14,12 +14,12 @@ import com.kotlinnlp.tokensencoder.TokensEncoderParameters
 /**
  * The [LSSModel] parameters.
  *
+ * @property tokensEncoderParams the parameters of the tokens encoder
  * @property contextEncoderParams the parameters of the context encoder
  * @property headsEncoderParams the parameters of the heads encoder
- * @property tokensEncoderParams the parameters of the tokens encoder
  */
 data class LSSParameters(
+  val tokensEncoderParams: TokensEncoderParameters,
   val contextEncoderParams: DeepBiRNNParameters,
-  val headsEncoderParams: BiRNNParameters,
-  val tokensEncoderParams: TokensEncoderParameters
+  val headsEncoderParams: BiRNNParameters
 )
