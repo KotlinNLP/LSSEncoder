@@ -21,12 +21,12 @@ import java.lang.RuntimeException
  *
  * @property model the encoder model
  * @property useDropout whether to apply the dropout during the [forward]
- * @property id
+ * @property id an identification number useful to track a specific encoder
  */
 class LSSEncoder(
   val model: LSSModel,
   override val useDropout: Boolean,
-  override val id: Int
+  override val id: Int = 0
 ) : NeuralProcessor<
   ParsingSentence, // InputType
   LatentSyntacticStructure, // OutputType
