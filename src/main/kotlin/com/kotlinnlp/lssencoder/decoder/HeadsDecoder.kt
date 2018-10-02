@@ -23,5 +23,5 @@ interface HeadsDecoder {
    *
    * @return the scored heads
    */
-  fun decode(lss: LatentSyntacticStructure): ScoredArcs
+  fun decode(lss: LatentSyntacticStructure<*, *>): ScoredArcs
 }

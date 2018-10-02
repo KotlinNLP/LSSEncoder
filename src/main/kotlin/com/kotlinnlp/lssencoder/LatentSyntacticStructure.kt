@@ -7,7 +7,8 @@
 
 package com.kotlinnlp.lssencoder
 
-import com.kotlinnlp.lssencoder.language.ParsingSentence
+import com.kotlinnlp.linguisticdescription.sentence.SentenceIdentificable
+import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 
 /**
@@ -19,8 +20,8 @@ import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
  * @property latentHeads the latent heads encoded by the heads encoder
  * @property virtualRoot the vector that represents the root token of a sentence
  */
-data class LatentSyntacticStructure(
-  val sentence: ParsingSentence,
+data class LatentSyntacticStructure<TokenType : TokenIdentificable, SentenceType : SentenceIdentificable<TokenType>>(
+  val sentence: SentenceType,
   val tokensEncodings: List<DenseNDArray>,
   val contextVectors: List<DenseNDArray>,
   val latentHeads: List<DenseNDArray>,

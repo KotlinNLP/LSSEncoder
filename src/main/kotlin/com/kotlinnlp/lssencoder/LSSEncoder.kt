@@ -7,8 +7,8 @@
 
 package com.kotlinnlp.lssencoder
 
-import com.kotlinnlp.lssencoder.language.ParsingSentence
-import com.kotlinnlp.lssencoder.language.ParsingToken
+import com.kotlinnlp.linguisticdescription.sentence.SentenceIdentificable
+import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.deeplearning.birnn.BiRNNEncoder
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
@@ -23,13 +23,13 @@ import java.lang.RuntimeException
  * @property useDropout whether to apply the dropout during the [forward]
  * @property id an identification number useful to track a specific encoder
  */
-class LSSEncoder(
-  val model: LSSModel,
+class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentificable<TokenType>>(
+  val model: LSSModel<TokenType, SentenceType>,
   override val useDropout: Boolean,
   override val id: Int = 0
 ) : NeuralProcessor<
-  ParsingSentence, // InputType
-  LatentSyntacticStructure, // OutputType
+  SentenceType, // InputType
+  LatentSyntacticStructure<TokenType, SentenceType>, // OutputType
   LSSEncoder.OutputErrors, // ErrorsType
   NeuralProcessor.NoInputErrors, // InputErrorsType
   LSSParameters // ParamsType
@@ -49,9 +49,9 @@ class LSSEncoder(
   override val propagateToInput: Boolean = false
 
   /**
-   * The tokens encoder wrapped with a sentence converter from the [ParsingSentence].
+   * The tokens encoder wrapped with a sentence converter from the input sentence.
    */
-  private val tokensEncoderWrapper: TokensEncoderWrapper<ParsingToken, ParsingSentence, *, *> =
+  private val tokensEncoderWrapper: TokensEncoderWrapper<TokenType, SentenceType, *, *> =
     this.model.tokensEncoderWrapperModel.buildWrapper(useDropout = true)
 
   /**
@@ -75,7 +75,7 @@ class LSSEncoder(
    *
    * @return the latent syntactic structure
    */
-  override fun forward(input: ParsingSentence): LatentSyntacticStructure {
+  override fun forward(input: SentenceType): LatentSyntacticStructure<TokenType, SentenceType> {
 
     val tokensEncodings: List<DenseNDArray> = this.tokensEncoderWrapper.forward(input)
     val contextVectors: List<DenseNDArray> = this.contextEncoder.forward(tokensEncodings)

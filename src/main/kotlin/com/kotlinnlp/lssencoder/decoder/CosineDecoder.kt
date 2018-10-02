@@ -7,7 +7,8 @@
 
 package com.kotlinnlp.lssencoder.decoder
 
-import com.kotlinnlp.lssencoder.language.ParsingToken
+import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
+import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.lssencoder.LatentSyntacticStructure
 import com.kotlinnlp.simplednn.simplemath.cosineSimilarity
 
@@ -37,7 +38,7 @@ class CosineDecoder : HeadsDecoder {
    *
    * The root vector must be normalized each time because it is being trained.
    */
-  private lateinit var lssNorm: LatentSyntacticStructure
+  private lateinit var lssNorm: LatentSyntacticStructure<*, *>
 
   /**
    * Decode all the possible heads of each encoded token, assigning them a score.
@@ -48,7 +49,7 @@ class CosineDecoder : HeadsDecoder {
    *
    * @return the scored heads
    */
-  override fun decode(lss: LatentSyntacticStructure): ScoredArcs {
+  override fun decode(lss: LatentSyntacticStructure<*, *>): ScoredArcs {
 
     this.lssNorm = lss.copy(
       contextVectors = lss.contextVectors.map { it.normalize2() },
@@ -72,7 +73,7 @@ class CosineDecoder : HeadsDecoder {
    *
    * @param dependent the dependent token
    */
-  private fun setHeadsScores(dependent: ParsingToken) {
+  private fun <T : TokenIdentificable>setHeadsScores(dependent: T) {
 
     val scores: MutableMap<Int, Double> = this.similarityMatrix.getValue(dependent.id)
 
@@ -91,11 +92,11 @@ class CosineDecoder : HeadsDecoder {
    *
    * @param dependent the dependent token
    */
-  private fun setRootScore(dependent: ParsingToken) {
+  private fun <T : TokenIdentificable>setRootScore(dependent: T) {
 
     this.similarityMatrix.getValue(dependent.id)[ScoredArcs.rootId] = 0.0 // default root score
 
-    if (!dependent.isPunctuation) { // the root shouldn't be a punctuation token
+    if (dependent is FormToken && !dependent.isPunctuation) { // the root shouldn't be a punctuation token
 
       this.similarityMatrix.getValue(dependent.id)[ScoredArcs.rootId] = cosineSimilarity(
         a = this.lssNorm.getLatentHeadById(dependent.id),
@@ -110,7 +111,7 @@ class CosineDecoder : HeadsDecoder {
    *
    * @param dependent the dependent token
    */
-  private fun normalizeToDistribution(dependent: ParsingToken) {
+  private fun <T : TokenIdentificable>normalizeToDistribution(dependent: T) {
 
     val scores: MutableMap<Int, Double> = this.similarityMatrix.getValue(dependent.id)
 

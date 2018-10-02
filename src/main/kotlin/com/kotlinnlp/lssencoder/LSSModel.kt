@@ -7,12 +7,12 @@
 
 package com.kotlinnlp.lssencoder
 
+import com.kotlinnlp.linguisticdescription.sentence.SentenceIdentificable
+import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.simplednn.core.arrays.UpdatableDenseArray
 import com.kotlinnlp.simplednn.core.functionalities.initializers.GlorotInitializer
 import com.kotlinnlp.simplednn.core.embeddings.Embedding
 import com.kotlinnlp.simplednn.simplemath.ndarray.Shape
-import com.kotlinnlp.lssencoder.language.ParsingSentence
-import com.kotlinnlp.lssencoder.language.ParsingToken
 import com.kotlinnlp.simplednn.core.layers.LayerType
 import com.kotlinnlp.simplednn.core.layers.models.merge.mergeconfig.ConcatFeedforwardMerge
 import com.kotlinnlp.simplednn.deeplearning.birnn.BiRNN
@@ -26,13 +26,13 @@ import java.io.InputStream
  * The model of the [LSSEncoder].
  *
  * @property tokensEncoderWrapperModel the model of the TokensEncoder combined with its sentence converter
- * @property contextBiRNNConfig the configuration of the ContextEncoder BiRNN (if null the ContextEncoder is not used)
- * @property headsBiRNNConfig the configuration of the HeadsEncoder BiRNN
+ * @param contextBiRNNConfig the configuration of the ContextEncoder BiRNN (if null the ContextEncoder is not used)
+ * @param headsBiRNNConfig the configuration of the HeadsEncoder BiRNN
  */
-class LSSModel(
-  val tokensEncoderWrapperModel: TokensEncoderWrapperModel<ParsingToken, ParsingSentence, *, *>,
-  val contextBiRNNConfig: BiRNNConfig,
-  val headsBiRNNConfig: BiRNNConfig
+class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentificable<TokenType>>(
+  val tokensEncoderWrapperModel: TokensEncoderWrapperModel<TokenType, SentenceType, *, *>,
+  contextBiRNNConfig: BiRNNConfig,
+  headsBiRNNConfig: BiRNNConfig
 ) {
 
   companion object {
@@ -50,29 +50,29 @@ class LSSModel(
      *
      * @return the [LSSModel] read from [inputStream] and decoded
      */
-    fun load(inputStream: InputStream): LSSModel = Serializer.deserialize(inputStream)
+    fun load(inputStream: InputStream): LSSModel<*, *> = Serializer.deserialize(inputStream)
   }
 
   /**
    * The model of the context encoder.
    */
-  val contextEncoderModel = if (this.contextBiRNNConfig.numberOfLayers == 2)
+  val contextEncoderModel = if (contextBiRNNConfig.numberOfLayers == 2)
     DeepBiRNN(
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
         dropout = 0.0,
-        recurrentConnectionType = this.contextBiRNNConfig.connectionType,
+        recurrentConnectionType = contextBiRNNConfig.connectionType,
         hiddenSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
-        hiddenActivation = this.contextBiRNNConfig.hiddenActivation,
+        hiddenActivation = contextBiRNNConfig.hiddenActivation,
         biasesInitializer = null),
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize * 2,
         dropout = 0.0,
-        recurrentConnectionType = this.contextBiRNNConfig.connectionType,
+        recurrentConnectionType = contextBiRNNConfig.connectionType,
         hiddenSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
-        hiddenActivation = this.contextBiRNNConfig.hiddenActivation,
+        hiddenActivation = contextBiRNNConfig.hiddenActivation,
         biasesInitializer = null))
   else
     DeepBiRNN(
@@ -80,9 +80,9 @@ class LSSModel(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
         dropout = 0.0,
-        recurrentConnectionType = this.contextBiRNNConfig.connectionType,
+        recurrentConnectionType = contextBiRNNConfig.connectionType,
         hiddenSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
-        hiddenActivation = this.contextBiRNNConfig.hiddenActivation,
+        hiddenActivation = contextBiRNNConfig.hiddenActivation,
         biasesInitializer = null))
 
   /**
@@ -97,8 +97,8 @@ class LSSModel(
     inputType = LayerType.Input.Dense,
     inputSize = this.contextVectorsSize,
     dropout = 0.0,
-    recurrentConnectionType = this.headsBiRNNConfig.connectionType,
-    hiddenActivation = this.headsBiRNNConfig.hiddenActivation,
+    recurrentConnectionType = headsBiRNNConfig.connectionType,
+    hiddenActivation = headsBiRNNConfig.hiddenActivation,
     hiddenSize = this.contextVectorsSize,
     outputMergeConfiguration = ConcatFeedforwardMerge(outputSize = this.contextVectorsSize))
 
