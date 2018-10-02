@@ -26,13 +26,13 @@ import java.io.InputStream
  * The model of the [LSSEncoder].
  *
  * @property tokensEncoderWrapperModel the model of the TokensEncoder combined with its sentence converter
- * @param contextBiRNNConfig the configuration of the ContextEncoder BiRNN (if null the ContextEncoder is not used)
- * @param headsBiRNNConfig the configuration of the HeadsEncoder BiRNN
+ * @property contextBiRNNConfig the configuration of the ContextEncoder BiRNN (if null the ContextEncoder is not used)
+ * @property headsBiRNNConfig the configuration of the HeadsEncoder BiRNN
  */
 class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentificable<TokenType>>(
   val tokensEncoderWrapperModel: TokensEncoderWrapperModel<TokenType, SentenceType, *, *>,
-  contextBiRNNConfig: BiRNNConfig,
-  headsBiRNNConfig: BiRNNConfig
+  val contextBiRNNConfig: BiRNNConfig,
+  val headsBiRNNConfig: BiRNNConfig
 ) {
 
   companion object {
