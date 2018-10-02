@@ -51,13 +51,13 @@ class LSSEncoder(
   /**
    * The tokens encoder wrapped with a sentence converter from the [ParsingSentence].
    */
-  val tokensEncoderWrapper: TokensEncoderWrapper<ParsingToken, ParsingSentence, *, *> =
+  private val tokensEncoderWrapper: TokensEncoderWrapper<ParsingToken, ParsingSentence, *, *> =
     this.model.tokensEncoderWrapperModel.buildWrapper(useDropout = true)
 
   /**
    * The encoder of tokens encodings sentential context.
    */
-  val contextEncoder = DeepBiRNNEncoder<DenseNDArray>(
+  private val contextEncoder = DeepBiRNNEncoder<DenseNDArray>(
     network = this.model.contextEncoderModel,
     propagateToInput = true,
     useDropout = this.useDropout)
@@ -65,7 +65,7 @@ class LSSEncoder(
   /**
    * The encoder that generated the latent heads representation.
    */
-  val headsEncoder = BiRNNEncoder<DenseNDArray>(
+  private val headsEncoder = BiRNNEncoder<DenseNDArray>(
     network = this.model.headsEncoderBiRNN,
     propagateToInput = true,
     useDropout = this.useDropout)
