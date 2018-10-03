@@ -22,6 +22,7 @@ import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNN
 import com.kotlinnlp.tokensencoder.wrapper.TokensEncoderWrapperModel
 import com.kotlinnlp.utils.Serializer
 import java.io.InputStream
+import java.io.Serializable
 
 /**
  * The model of the [LSSEncoder].
@@ -36,7 +37,7 @@ class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentifica
   val tokensEncoderWrapperModel: TokensEncoderWrapperModel<TokenType, SentenceType, *, *>,
   val contextBiRNNConfig: BiRNNConfig,
   val headsBiRNNConfig: BiRNNConfig
-) {
+) : Serializable {
 
   companion object {
 
