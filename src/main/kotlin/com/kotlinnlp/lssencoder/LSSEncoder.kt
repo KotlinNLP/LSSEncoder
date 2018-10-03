@@ -38,10 +38,14 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
   /**
    * The output errors of the LSS encoder.
    *
+   * @property tokensEncodings the errors of the tokens encodings
    * @property contextVectors the errors of the context vectors
    * @property latentHeads the errors of the latent heads
    */
-  data class OutputErrors(val contextVectors: List<DenseNDArray>, val latentHeads: List<DenseNDArray>)
+  data class OutputErrors(
+    val tokensEncodings: List<DenseNDArray>,
+    val contextVectors: List<DenseNDArray>,
+    val latentHeads: List<DenseNDArray>)
 
   /**
    * Property not used because the input is a sentence.
@@ -101,7 +105,10 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
 
     this.contextEncoder.backward(contextErrors)
 
-    this.tokensEncoderWrapper.backward(this.contextEncoder.getInputErrors(copy = false))
+    val tokensEncodingsErrors: List<DenseNDArray> =
+      outputErrors.tokensEncodings.zip(this.contextEncoder.getInputErrors(copy = false)) { c, h -> c.sum(h) }
+
+    this.tokensEncoderWrapper.backward(tokensEncodingsErrors)
   }
 
   /**
