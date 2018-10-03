@@ -87,8 +87,8 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
   override fun forward(input: SentenceType): LatentSyntacticStructure<TokenType, SentenceType> {
 
     val tokensEncodings: List<DenseNDArray> = this.tokensEncoderWrapper.forward(input)
-    val contextVectors: List<DenseNDArray> = this.contextEncoder.forward(tokensEncodings)
-    val latentHeads: List<DenseNDArray> = this.headsEncoder.forward(contextVectors)
+    val contextVectors: List<DenseNDArray> = this.contextEncoder.forward(tokensEncodings).map { it.copy() }
+    val latentHeads: List<DenseNDArray> = this.headsEncoder.forward(contextVectors).map { it.copy() }
 
     return LatentSyntacticStructure(
       sentence = input,
