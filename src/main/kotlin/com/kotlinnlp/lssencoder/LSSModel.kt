@@ -7,6 +7,7 @@
 
 package com.kotlinnlp.lssencoder
 
+import com.kotlinnlp.linguisticdescription.language.Language
 import com.kotlinnlp.linguisticdescription.sentence.SentenceIdentificable
 import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.simplednn.core.arrays.UpdatableDenseArray
@@ -25,11 +26,13 @@ import java.io.InputStream
 /**
  * The model of the [LSSEncoder].
  *
+ * @property language the language within the encoder works (default = unknown)
  * @property tokensEncoderWrapperModel the model of the TokensEncoder combined with its sentence converter
  * @property contextBiRNNConfig the configuration of the ContextEncoder BiRNN (if null the ContextEncoder is not used)
  * @property headsBiRNNConfig the configuration of the HeadsEncoder BiRNN
  */
 class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentificable<TokenType>>(
+  val language: Language = Language.Unknown,
   val tokensEncoderWrapperModel: TokensEncoderWrapperModel<TokenType, SentenceType, *, *>,
   val contextBiRNNConfig: BiRNNConfig,
   val headsBiRNNConfig: BiRNNConfig
