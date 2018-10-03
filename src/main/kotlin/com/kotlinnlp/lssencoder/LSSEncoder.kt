@@ -12,7 +12,10 @@ import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
 import com.kotlinnlp.simplednn.deeplearning.birnn.BiRNNEncoder
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNEncoder
+import com.kotlinnlp.simplednn.simplemath.assignSum
+import com.kotlinnlp.simplednn.simplemath.ndarray.Shape
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
+import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArrayFactory
 import com.kotlinnlp.tokensencoder.wrapper.TokensEncoderWrapper
 import java.lang.RuntimeException
 
@@ -38,14 +41,16 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
   /**
    * The output errors of the LSS encoder.
    *
-   * @property tokensEncodings the errors of the tokens encodings
-   * @property contextVectors the errors of the context vectors
-   * @property latentHeads the errors of the latent heads
+   * @property size the number of errors in each list
+   * @property tokensEncodings the errors of the tokens encodings (can be null)
+   * @property contextVectors the errors of the context vectors (can be null)
+   * @property latentHeads the errors of the latent heads (can be null)
    */
   data class OutputErrors(
-    val tokensEncodings: List<DenseNDArray>,
-    val contextVectors: List<DenseNDArray>,
-    val latentHeads: List<DenseNDArray>)
+    val size: Int,
+    val tokensEncodings: List<DenseNDArray>? = null,
+    val contextVectors: List<DenseNDArray>? = null,
+    val latentHeads: List<DenseNDArray>? = null)
 
   /**
    * Property not used because the input is a sentence.
@@ -98,16 +103,20 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
    */
   override fun backward(outputErrors: OutputErrors) {
 
-    this.headsEncoder.backward(outputErrors.latentHeads)
+    val latentHeadsErrors: List<DenseNDArray> = outputErrors.latentHeads
+      ?: List(size = outputErrors.size, init = { DenseNDArrayFactory.zeros(Shape(this.model.contextVectorsSize)) })
+    val tokensEncodingsSize: Int = this.model.tokensEncoderWrapperModel.model.tokenEncodingSize
+    val tokensEncodingsErrors: List<DenseNDArray> = outputErrors.tokensEncodings
+      ?: List(size = outputErrors.size, init = { DenseNDArrayFactory.zeros(Shape(tokensEncodingsSize)) })
+    val contextVectorsErrors: List<DenseNDArray> = outputErrors.contextVectors
+      ?: List(size = outputErrors.size, init = { DenseNDArrayFactory.zeros(Shape(this.model.contextVectorsSize)) })
 
-    val contextErrors: List<DenseNDArray> =
-      outputErrors.contextVectors.zip(this.headsEncoder.getInputErrors(copy = false)) { c, h -> c.sum(h) }
+    this.headsEncoder.backward(latentHeadsErrors)
 
-    this.contextEncoder.backward(contextErrors)
+    contextVectorsErrors.assignSum(this.headsEncoder.getInputErrors(copy = false))
+    this.contextEncoder.backward(contextVectorsErrors)
 
-    val tokensEncodingsErrors: List<DenseNDArray> =
-      outputErrors.tokensEncodings.zip(this.contextEncoder.getInputErrors(copy = false)) { c, h -> c.sum(h) }
-
+    tokensEncodingsErrors.assignSum(this.contextEncoder.getInputErrors(copy = false))
     this.tokensEncoderWrapper.backward(tokensEncodingsErrors)
   }
 
