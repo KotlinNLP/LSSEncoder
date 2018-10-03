@@ -50,7 +50,9 @@ class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentifica
      *
      * @return the [LSSModel] read from [inputStream] and decoded
      */
-    fun load(inputStream: InputStream): LSSModel<*, *> = Serializer.deserialize(inputStream)
+    fun <TokenType: TokenIdentificable, SentenceType: SentenceIdentificable<TokenType>>load(
+      inputStream: InputStream
+    ): LSSModel<TokenType, SentenceType> = Serializer.deserialize(inputStream)
   }
 
   /**
