@@ -61,7 +61,7 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
    * The tokens encoder wrapped with a sentence converter from the input sentence.
    */
   private val tokensEncoderWrapper: TokensEncoderWrapper<TokenType, SentenceType, *, *> =
-    this.model.tokensEncoderWrapperModel.buildWrapper(useDropout = true)
+    this.model.tokensEncoderWrapperModel.buildEncoder(useDropout = true)
 
   /**
    * The encoder of tokens encodings sentential context.

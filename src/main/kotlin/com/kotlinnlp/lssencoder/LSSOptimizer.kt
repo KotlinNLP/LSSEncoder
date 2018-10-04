@@ -13,7 +13,6 @@ import com.kotlinnlp.simplednn.core.optimizer.ParamsOptimizer
 import com.kotlinnlp.simplednn.deeplearning.birnn.BiRNNParameters
 import com.kotlinnlp.simplednn.deeplearning.birnn.deepbirnn.DeepBiRNNParameters
 import com.kotlinnlp.tokensencoder.TokensEncoderOptimizer
-import com.kotlinnlp.tokensencoder.TokensEncoderOptimizerFactory
 
 /**
  * The optimizer of the [LSSModel].
@@ -30,7 +29,7 @@ class LSSOptimizer(
    * The optimizer of the tokens encoder.
    */
   private val tokensEncoderOptimizer: TokensEncoderOptimizer =
-    TokensEncoderOptimizerFactory(model = this.model.tokensEncoderWrapperModel.model, updateMethod = updateMethod)
+    this.model.tokensEncoderWrapperModel.model.buildOptimizer(updateMethod)
 
   /**
    * The optimizer of the heads encoder.
