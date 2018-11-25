@@ -80,6 +80,16 @@ class ScoredArcs(private val scores: Map<Int, Map<Int, Double>>) {
       ?.toPair()
 
   /**
+   * Find the best head of a given dependent.
+   *
+   * @param dependentId the id of the dependent token
+   * @param except the head not to be considered
+   *
+   * @return the highest scoring head-score entry
+   */
+  fun findHighestScoringHead(dependentId: Int, except: Int) = this.findHighestScoringHead(dependentId, listOf(except))
+
+  /**
    * @return the highest scoring element that points to the root
    */
   fun findHighestScoringTop(): Pair<Int, Double> {
