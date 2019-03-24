@@ -10,10 +10,8 @@ package com.kotlinnlp.lssencoder
 import com.kotlinnlp.linguisticdescription.language.Language
 import com.kotlinnlp.linguisticdescription.sentence.SentenceIdentificable
 import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
-import com.kotlinnlp.simplednn.core.arrays.UpdatableDenseArray
+import com.kotlinnlp.simplednn.core.arrays.ParamsArray
 import com.kotlinnlp.simplednn.core.functionalities.initializers.GlorotInitializer
-import com.kotlinnlp.simplednn.core.embeddings.Embedding
-import com.kotlinnlp.simplednn.simplemath.ndarray.Shape
 import com.kotlinnlp.simplednn.core.layers.LayerType
 import com.kotlinnlp.simplednn.core.layers.models.merge.mergeconfig.ConcatFeedforwardMerge
 import com.kotlinnlp.simplednn.deeplearning.birnn.BiRNN
@@ -111,12 +109,5 @@ class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentifica
   /**
    * The embeddings vector that represents the root token of a sentence.
    */
-  val rootEmbedding = Embedding(id = 0, array = UpdatableDenseArray(Shape(this.contextVectorsSize)))
-
-  /**
-   * Initialize the root embedding.
-   */
-  init {
-    GlorotInitializer().initialize(this.rootEmbedding.array.values)
-  }
+  val rootEmbedding = ParamsArray(this.contextVectorsSize, initializer = GlorotInitializer())
 }

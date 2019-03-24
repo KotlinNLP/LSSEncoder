@@ -34,8 +34,7 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
   SentenceType, // InputType
   LatentSyntacticStructure<TokenType, SentenceType>, // OutputType
   LSSEncoder.OutputErrors, // ErrorsType
-  NeuralProcessor.NoInputErrors, // InputErrorsType
-  LSSParameters // ParamsType
+  NeuralProcessor.NoInputErrors // InputErrorsType
   > {
 
   /**
@@ -95,7 +94,7 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
       tokensEncodings = tokensEncodings,
       contextVectors = contextVectors,
       latentHeads = latentHeads,
-      virtualRoot = this.model.rootEmbedding.array.values)
+      virtualRoot = this.model.rootEmbedding.values)
   }
 
   /**
@@ -134,9 +133,8 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
    *
    * @return the parameters errors
    */
-  override fun getParamsErrors(copy: Boolean) = LSSParameters(
-    contextEncoderParams = this.contextEncoder.getParamsErrors(copy = copy),
-    headsEncoderParams = this.headsEncoder.getParamsErrors(copy = copy),
-    tokensEncoderParams = this.tokensEncoderWrapper.getParamsErrors(copy = copy)
-  )
+  override fun getParamsErrors(copy: Boolean) =
+    this.contextEncoder.getParamsErrors(copy = copy) +
+      this.headsEncoder.getParamsErrors(copy = copy) +
+      this.tokensEncoderWrapper.getParamsErrors(copy = copy)
 }

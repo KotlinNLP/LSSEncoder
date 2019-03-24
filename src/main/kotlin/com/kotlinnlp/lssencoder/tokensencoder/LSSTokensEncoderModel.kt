@@ -10,7 +10,6 @@ package com.kotlinnlp.lssencoder.tokensencoder
 import com.kotlinnlp.linguisticdescription.sentence.SentenceIdentificable
 import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.lssencoder.LSSModel
-import com.kotlinnlp.simplednn.core.functionalities.updatemethods.UpdateMethod
 import com.kotlinnlp.tokensencoder.TokensEncoderModel
 
 /**
@@ -37,15 +36,5 @@ class LSSTokensEncoderModel<TokenType : TokenIdentificable, SentenceType : Sente
     model = this,
     useDropout = useDropout,
     id = id
-  )
-
-  /**
-   * @param updateMethod the update method helper (Learning Rate, ADAM, AdaGrad, ...)
-   *
-   * @return a new optimizer for this model
-   */
-  override fun buildOptimizer(updateMethod: UpdateMethod<*>) = LSSTokensEncoderOptimizer(
-    model = this,
-    updateMethod = updateMethod
   )
 }

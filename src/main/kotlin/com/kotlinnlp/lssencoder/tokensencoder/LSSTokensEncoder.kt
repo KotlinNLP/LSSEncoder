@@ -11,6 +11,7 @@ import com.kotlinnlp.linguisticdescription.sentence.SentenceIdentificable
 import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.lssencoder.LSSEncoder
 import com.kotlinnlp.simplednn.core.neuralprocessor.NeuralProcessor
+import com.kotlinnlp.simplednn.core.optimizer.ParamsErrorsList
 import com.kotlinnlp.simplednn.simplemath.ndarray.dense.DenseNDArray
 import com.kotlinnlp.tokensencoder.TokensEncoder
 import java.lang.RuntimeException
@@ -76,6 +77,5 @@ class LSSTokensEncoder<TokenType : TokenIdentificable, SentenceType : SentenceId
    *
    * @return the parameters errors
    */
-  override fun getParamsErrors(copy: Boolean): LSSTokensEncoderParams =
-    LSSTokensEncoderParams(lssParams = this.lssEncoder.getParamsErrors(copy = copy))
+  override fun getParamsErrors(copy: Boolean): ParamsErrorsList = this.lssEncoder.getParamsErrors(copy = copy)
 }
