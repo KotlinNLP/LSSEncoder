@@ -7,7 +7,6 @@
 
 package com.kotlinnlp.lssencoder.decoder
 
-import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
 import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.lssencoder.LatentSyntacticStructure
 import com.kotlinnlp.simplednn.simplemath.cosineSimilarity
@@ -61,8 +60,7 @@ class CosineDecoder : HeadsDecoder {
       this.similarityMatrix[it.id] = mutableMapOf()
 
       this.setHeadsScores(it)
-      this.setRootScore(it)
-      this.normalizeToDistribution(it)
+      this.normalize(it)
     }
 
     return ScoredArcs(scores = this.similarityMatrix)
@@ -88,37 +86,15 @@ class CosineDecoder : HeadsDecoder {
   }
 
   /**
-   * Set the root score of the given [dependent] in the [similarityMatrix] map.
-   *
-   * @param dependent the dependent token
-   */
-  private fun <T : TokenIdentificable>setRootScore(dependent: T) {
-
-    this.similarityMatrix.getValue(dependent.id)[ScoredArcs.rootId] = 0.0 // default root score
-
-    if (dependent is FormToken && !dependent.isPunctuation) { // the root shouldn't be a punctuation token
-
-      this.similarityMatrix.getValue(dependent.id)[ScoredArcs.rootId] = cosineSimilarity(
-        a = this.lssNorm.getLatentHeadById(dependent.id),
-        b = this.lssNorm.virtualRoot)
-    }
-  }
-
-  /**
    * Normalize the scores of the given [dependent].
-   * Scores are transformed into a linear scale with the arc cosine function and normalized into a probability
-   * distribution.
+   * Scores are transformed into a linear scale with the arc cosine function.
    *
    * @param dependent the dependent token
    */
-  private fun <T : TokenIdentificable>normalizeToDistribution(dependent: T) {
+  private fun <T : TokenIdentificable>normalize(dependent: T) {
 
     val scores: MutableMap<Int, Double> = this.similarityMatrix.getValue(dependent.id)
 
     scores.forEach { scores.compute(it.key) { _, _ -> HALF_PI - Math.acos(it.value) } }
-
-    val normSum: Double = scores.values.sum()
-
-    scores.forEach { scores.compute(it.key) { _, _ -> it.value / normSum } }
   }
 }
