@@ -7,6 +7,8 @@
 
 package com.kotlinnlp.lssencoder.decoder
 
+import java.lang.Double.max
+
 /**
  * The structure that contains the scored heads of the tokens that are encoded in a Latent Syntactic Structure.
  * The score is a double in the range [0, 1].
@@ -16,14 +18,6 @@ package com.kotlinnlp.lssencoder.decoder
  */
 @Suppress("UNUSED")
 class ScoredArcs(private val scores: Map<Int, Map<Int, Double>>) {
-
-  companion object {
-
-    /**
-     * The root is intended to have id = -1.
-     */
-    const val rootId: Int = -1
-  }
 
   /**
    * The arc related to a specific dependent.
@@ -49,7 +43,10 @@ class ScoredArcs(private val scores: Map<Int, Map<Int, Double>>) {
    * @return the arc score between the given [dependentId] and [governorId]
    */
   fun getScore(dependentId: Int, governorId: Int?): Double =
-    this.scores.getValue(dependentId).getValue(governorId ?: rootId)
+    if (governorId != null)
+      this.scores.getValue(dependentId).getValue(governorId)
+    else
+      1.0 // TODO: root score?
 
   /**
    * @param dependentId the dependent id
@@ -90,12 +87,19 @@ class ScoredArcs(private val scores: Map<Int, Map<Int, Double>>) {
   fun findHighestScoringHead(dependentId: Int, except: Int) = this.findHighestScoringHead(dependentId, listOf(except))
 
   /**
-   * @return the highest scoring element that points to the root
+   * @return the element that points to the root
    */
-  fun findHighestScoringTop(): Pair<Int, Double> {
+  fun findHighestScoringTop(): Int {
 
-    val topId = this.scores.maxBy { it.value.getValue(rootId) }!!.key
+    val highestSelectabilityScore = mutableMapOf<Int, Double>()
 
-    return Pair(topId, this.scores.getValue(topId).getValue(rootId))
+    this.scores.forEach { dependentId, heads ->
+
+      heads.forEach { _, score ->
+        highestSelectabilityScore[dependentId] = max(highestSelectabilityScore[dependentId] ?: 0.0, score)
+      }
+    }
+
+    return highestSelectabilityScore.minBy { it.value }!!.key
   }
 }
