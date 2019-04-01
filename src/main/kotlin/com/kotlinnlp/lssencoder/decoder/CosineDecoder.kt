@@ -62,7 +62,7 @@ class CosineDecoder : HeadsDecoder {
 
       this.setHeadsScores(it)
       this.setRootScore(it)
-      this.normalizeToDistribution(it)
+      this.transformToLinearScale(it)
     }
 
     return ScoredArcs(scores = this.similarityMatrix)
@@ -106,19 +106,14 @@ class CosineDecoder : HeadsDecoder {
 
   /**
    * Normalize the scores of the given [dependent].
-   * Scores are transformed into a linear scale with the arc cosine function and normalized into a probability
-   * distribution.
+   * Scores are transformed into a linear scale with the arc cosine function.
    *
    * @param dependent the dependent token
    */
-  private fun <T : TokenIdentificable>normalizeToDistribution(dependent: T) {
+  private fun <T : TokenIdentificable>transformToLinearScale(dependent: T) {
 
     val scores: MutableMap<Int, Double> = this.similarityMatrix.getValue(dependent.id)
 
     scores.forEach { scores.compute(it.key) { _, _ -> HALF_PI - Math.acos(it.value) } }
-
-    val normSum: Double = scores.values.sum()
-
-    scores.forEach { scores.compute(it.key) { _, _ -> it.value / normSum } }
   }
 }
