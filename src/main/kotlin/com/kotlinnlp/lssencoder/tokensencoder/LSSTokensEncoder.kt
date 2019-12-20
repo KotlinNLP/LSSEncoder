@@ -27,7 +27,7 @@ class LSSTokensEncoder<TokenType : TokenIdentificable, SentenceType : SentenceId
   override val model: LSSTokensEncoderModel<TokenType, SentenceType>,
   override val useDropout: Boolean,
   override val id: Int = 0
-) : TokensEncoder<TokenType, SentenceType>(model) {
+) : TokensEncoder<TokenType, SentenceType>() {
 
   /**
    * The encoder of the Latent Syntactic Structure of a sentence.
