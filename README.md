@@ -1,4 +1,4 @@
-# LSSEncoder [![GitHub version](https://badge.fury.io/gh/KotlinNLP%2FLSSEncoder.svg)](https://badge.fury.io/gh/KotlinNLP%2FLSSEncoder) [![Build Status](https://travis-ci.org/KotlinNLP/LSSEncoder.svg?branch=master)](https://travis-ci.org/KotlinNLP/LSSEncoder)
+# LSSEncoder [![Maven Central](https://img.shields.io/maven-central/v/com.kotlinnlp/lssencoder.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.kotlinnlp%22%20AND%20a:%22lssencoder%22) [![Build Status](https://travis-ci.org/KotlinNLP/LSSEncoder.svg?branch=master)](https://travis-ci.org/KotlinNLP/LSSEncoder)
 
 LSSEncoder is the encoder of the Latent Syntactic Structure (LSS) defined in 
 [Grella, Cangialosi - Non-Projective Dependency Parsing via Latent Heads Representation (LHR)](https://arxiv.org/abs/1802.02116 "arXiv.org - Non-Projective Dependency Parsing via Latent Heads Representation (LHR)").
