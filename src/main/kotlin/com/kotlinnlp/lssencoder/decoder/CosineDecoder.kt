@@ -96,7 +96,7 @@ class CosineDecoder : HeadsDecoder {
 
     this.similarityMatrix.getValue(dependent.id)[ScoredArcs.rootId] = 0.0 // default root score
 
-    if (dependent is FormToken && !dependent.isPunctuation) { // the root shouldn't be a punctuation token
+    if (dependent is FormToken && !dependent.isPunct) { // the root shouldn't be a punctuation token
 
       this.similarityMatrix.getValue(dependent.id)[ScoredArcs.rootId] = cosineSimilarity(
         a = this.lssNorm.getLatentHeadById(dependent.id),
