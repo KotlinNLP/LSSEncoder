@@ -11,6 +11,7 @@ import com.kotlinnlp.linguisticdescription.sentence.token.FormToken
 import com.kotlinnlp.linguisticdescription.sentence.token.TokenIdentificable
 import com.kotlinnlp.lssencoder.LatentSyntacticStructure
 import com.kotlinnlp.simplednn.simplemath.cosineSimilarity
+import kotlin.math.acos
 
 /**
  * The [HeadsDecoder] based on the cosine similarity function.
@@ -114,6 +115,6 @@ class CosineDecoder : HeadsDecoder {
 
     val scores: MutableMap<Int, Double> = this.similarityMatrix.getValue(dependent.id)
 
-    scores.forEach { scores.compute(it.key) { _, _ -> HALF_PI - Math.acos(it.value) } }
+    scores.forEach { scores.compute(it.key) { _, _ -> HALF_PI - acos(it.value) } }
   }
 }
