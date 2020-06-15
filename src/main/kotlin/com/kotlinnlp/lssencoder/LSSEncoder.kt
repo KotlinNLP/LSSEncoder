@@ -23,12 +23,14 @@ import java.lang.RuntimeException
  * The main encoder that builds the latent syntactic structure.
  *
  * @property model the encoder model
- * @property useDropout whether to apply the dropout during the [forward]
+ * @param contextDropout the dropout probability of the context encodings (default 0.0)
+ * @param headsDropout the dropout probability of the latent heads encodings (default 0.0)
  * @property id an identification number useful to track a specific encoder
  */
 class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentificable<TokenType>>(
   val model: LSSModel<TokenType, SentenceType>,
-  override val useDropout: Boolean,
+  contextDropout: Double = 0.0,
+  headsDropout: Double = 0.0,
   override val id: Int = 0
 ) : NeuralProcessor<
   SentenceType, // InputType
@@ -60,7 +62,7 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
    * The tokens encoder wrapped with a sentence converter from the input sentence.
    */
   private val tokensEncoderWrapper: TokensEncoderWrapper<TokenType, SentenceType, *, *> =
-    this.model.tokensEncoderWrapperModel.buildEncoder(useDropout = true)
+    this.model.tokensEncoderWrapperModel.buildEncoder()
 
   /**
    * The encoder of tokens encodings sentential context.
@@ -68,7 +70,8 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
   private val contextEncoder = DeepBiRNNEncoder<DenseNDArray>(
     network = this.model.contextEncoderModel,
     propagateToInput = true,
-    useDropout = this.useDropout)
+    rnnDropout = contextDropout,
+    mergeDropout = contextDropout)
 
   /**
    * The encoder that generated the latent heads representation.
@@ -76,7 +79,8 @@ class LSSEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentifi
   private val headsEncoder = BiRNNEncoder<DenseNDArray>(
     network = this.model.headsEncoderBiRNN,
     propagateToInput = true,
-    useDropout = this.useDropout)
+    rnnDropout = headsDropout,
+    mergeDropout = headsDropout)
 
   /**
    * @param input the sentence to encode

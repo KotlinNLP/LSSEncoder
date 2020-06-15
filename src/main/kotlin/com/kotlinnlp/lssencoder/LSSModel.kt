@@ -65,7 +65,6 @@ class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentifica
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
-        dropout = 0.0,
         recurrentConnectionType = contextBiRNNConfig.connectionType,
         hiddenSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
         hiddenActivation = contextBiRNNConfig.hiddenActivation,
@@ -73,7 +72,6 @@ class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentifica
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize * 2,
-        dropout = 0.0,
         recurrentConnectionType = contextBiRNNConfig.connectionType,
         hiddenSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
         hiddenActivation = contextBiRNNConfig.hiddenActivation,
@@ -83,7 +81,6 @@ class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentifica
       BiRNN(
         inputType = LayerType.Input.Dense,
         inputSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
-        dropout = 0.0,
         recurrentConnectionType = contextBiRNNConfig.connectionType,
         hiddenSize = this.tokensEncoderWrapperModel.model.tokenEncodingSize,
         hiddenActivation = contextBiRNNConfig.hiddenActivation,
@@ -100,7 +97,6 @@ class LSSModel<TokenType : TokenIdentificable, SentenceType : SentenceIdentifica
   val headsEncoderBiRNN = BiRNN(
     inputType = LayerType.Input.Dense,
     inputSize = this.contextVectorsSize,
-    dropout = 0.0,
     recurrentConnectionType = headsBiRNNConfig.connectionType,
     hiddenActivation = headsBiRNNConfig.hiddenActivation,
     hiddenSize = this.contextVectorsSize,

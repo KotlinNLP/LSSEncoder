@@ -20,19 +20,17 @@ import java.lang.RuntimeException
  * An encoder of the tokens of a sentence that uses the Latent Syntactic Structure of an [LSSEncoder].
  *
  * @property model the tokens encoder model
- * @property useDropout whether to apply the dropout during the [forward]
  * @property id an identification number useful to track a specific encoder
  */
 class LSSTokensEncoder<TokenType : TokenIdentificable, SentenceType : SentenceIdentificable<TokenType>>(
   override val model: LSSTokensEncoderModel<TokenType, SentenceType>,
-  override val useDropout: Boolean,
   override val id: Int = 0
 ) : TokensEncoder<TokenType, SentenceType>() {
 
   /**
    * The encoder of the Latent Syntactic Structure of a sentence.
    */
-  private val lssEncoder = LSSEncoder(model = this.model.lssModel, useDropout = this.useDropout)
+  private val lssEncoder = LSSEncoder(this.model.lssModel)
 
   /**
    * Encode the token forms concatenating word embeddings, latent head representations and context vectors.
